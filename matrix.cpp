@@ -4,7 +4,8 @@
 void print_matrix(int** matrix, size_t m, size_t n);
 void print_transpose_matrix(int** matrix, size_t m, size_t n);
 
-int main() {
+int main() 
+{
     try {
         size_t m = 0, n = 0;
         std::cout << "Write strokes and columns count: ";
@@ -40,7 +41,8 @@ int main() {
     return 0;
 }
 
-void print_matrix(int** matrix, size_t m, size_t n) {
+void print_matrix(int** matrix, size_t m, size_t n)
+{
     for (size_t i = 0; i < m; i++) {
         for (size_t j = 0; j < n; j++) {
             std::cout << matrix[i][j] << "  ";
@@ -49,7 +51,8 @@ void print_matrix(int** matrix, size_t m, size_t n) {
     }
 }
 
-void print_transpose_matrix(int** matrix, size_t m, size_t n) {
+void print_transpose_matrix(int** matrix, size_t m, size_t n)
+{
     for (size_t i = 0; i < n; i++) {
         for (size_t j = 0; j < m; j++) {
             std::cout << matrix[j][i] << "  ";
