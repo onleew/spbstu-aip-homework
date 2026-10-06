@@ -108,8 +108,7 @@ unsigned get_matrix_max_num_length(const int * const * matrix, size_t m, size_t 
     unsigned res = 1;
     int max_abs_elem = get_matrix_max_abs_element(matrix, m, n);
     unsigned cur_num = 10;
-    while ((max_abs_elem > 0 && cur_num <= max_abs_elem) 
-    || (max_abs_elem < 0 && cur_num <= -max_abs_elem)) {
+    while ((max_abs_elem > 0 && cur_num <= max_abs_elem) || (max_abs_elem < 0 && cur_num <= -max_abs_elem)) {
         cur_num *= 10;
         res++;
     }
