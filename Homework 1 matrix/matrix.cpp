@@ -19,7 +19,7 @@ int main()
         std::cout << "Write strokes and columns count: ";
         std::cin >> m >> n;
         std::cout << std::endl;
-        if (std::cin.fail()) {
+        if (std::cin.fail() || m == 0 || n == 0) {
             std::cerr << "Inccorect input m&n" << std::endl;
             return exit_code_incorrect_input;
         }
