@@ -1,10 +1,15 @@
 #include <iostream>
 #include <exception>
 #include <iomanip>
+#include <limits>
+
+const int int_max = std::numeric_limits<int>::max();
+const int exit_code_incorrect_input = 1;
+const int exit_code_allocate_error = 2;
+const int exit_code_good = 0;
 
 void print_matrix(const int * const * matrix, size_t m, size_t n);
 int** generate_transpose_matrix(const int * const * matrix, size_t m, size_t n);
-int get_matrix_max_abs_element(const int * const * matrix, size_t m, size_t n);
 unsigned get_matrix_max_num_length(const int * const * matrix, size_t m, size_t n);
 
 int main()
@@ -16,7 +21,7 @@ int main()
         std::cout << std::endl;
         if (std::cin.fail()) {
             std::cerr << "Inccorect input m&n" << std::endl;
-            return 1;
+            return exit_code_incorrect_input;
         }
         int** matrix = new int*[m];
         for (size_t i = 0; i < m; i++) {
@@ -26,16 +31,16 @@ int main()
                 for (size_t j = 0; j < n; j++) {
                     std::cin >> matrix[i][j];
                     if (std::cin.fail()) {
-                        std::cerr << "Inccorect digit" << std::endl;
+                        std::cerr << "Inccorect digits" << std::endl;
                         for (size_t k = 0; k < i; k++) delete[] matrix[k];
                         delete[] matrix;
-                        return 1;
+                        return exit_code_incorrect_input;
                     }
                 }
             } catch (const std::bad_alloc& e) {
                 std::cerr << "Allocate error: " << e.what() << std::endl;
                 delete[] matrix;
-                return 2;
+                return exit_code_allocate_error;
             }
             std::cout << std::endl;
         }
@@ -46,13 +51,15 @@ int main()
         int** transpose_matrix = generate_transpose_matrix(matrix, m, n);
         print_matrix(transpose_matrix, n, m);
 
-        delete[] transpose_matrix;
+        for (size_t i = 0; i < m; i++) delete[] matrix[i];
         delete[] matrix;
+        for (size_t i = 0; i < n; i++) delete[] transpose_matrix[i];
+        delete[] transpose_matrix;
     } catch (const std::bad_alloc& e) {
         std::cerr << "Allocate error: " << e.what() << std::endl;
-        return 2;
+        return exit_code_allocate_error;
     }
-    return 0;
+    return exit_code_good;
 }
 
 void print_matrix(const int * const * matrix, size_t m, size_t n)
@@ -84,36 +91,24 @@ int** generate_transpose_matrix(const int * const * matrix, size_t m, size_t n)
     return transpose_matrix;
 }
 
-int get_matrix_max_abs_element(const int * const * matrix, size_t m, size_t n)
-{
-    int abs_res = 0;
-    int res = 0;
-    for (size_t i = 0; i < m; i++) {
-        for (size_t j = 0; j < n; j++) {
-            if (matrix[i][j] > abs_res || -matrix[i][j] > abs_res) {
-                res = matrix[i][j];
-                if (res < 0) {
-                    abs_res = -res;
-                } else {
-                    abs_res = res;
-                }
-            }
-        }
-    }
-    return res;
-}
-
 unsigned get_matrix_max_num_length(const int * const * matrix, size_t m, size_t n)
 {
     unsigned res = 1;
-    int max_abs_elem = get_matrix_max_abs_element(matrix, m, n);
-    unsigned cur_num = 10;
-    while ((max_abs_elem > 0 && cur_num <= max_abs_elem) || (max_abs_elem < 0 && cur_num <= -max_abs_elem)) {
-        cur_num *= 10;
-        res++;
-    }
-    if (max_abs_elem < 0) {
-        res++;
+    int max_10_pow_k = 10;
+    for (size_t i = 0; i < m; i++) {
+        for (size_t j = 0; j < n; j++) {
+            int cur_num = matrix[i][j];
+            if (cur_num < 0) {
+                cur_num *= -10;
+            }
+            while (cur_num >= max_10_pow_k) {
+                if (max_10_pow_k > int_max / 10) {
+                    return res+1;
+                }
+                max_10_pow_k *= 10;
+                res++;
+            }
+        }
     }
     return res;
 }
