@@ -19,12 +19,19 @@ int main()
         for (size_t i = 0; i < m; i++) {
             std::cout << "Write " << i+1 << " stroke digits: ";
             matrix[i] = new int[n];
-            for (size_t j = 0; j < n; j++) {
-                std::cin >> matrix[i][j];
-                if (std::cin.fail()) {
-                    std::cerr << "Inccorect digit" << std::endl;
-                    return 1;
+            try {
+                for (size_t j = 0; j < n; j++) {
+                    std::cin >> matrix[i][j];
+                    if (std::cin.fail()) {
+                        std::cerr << "Inccorect digit" << std::endl;
+                        delete[] matrix;
+                        return 1;
+                    }
                 }
+            } catch (const std::bad_alloc& e) {
+                std::cerr << "Allocate error: " << e.what() << std::endl;
+                delete[] matrix;
+                return 2;
             }
             std::cout << std::endl;
         }
@@ -37,6 +44,7 @@ int main()
         delete[] matrix;
     } catch (const std::bad_alloc& e) {
         std::cerr << "Allocate error: " << e.what() << std::endl;
+        return 2;
     }
     return 0;
 }
