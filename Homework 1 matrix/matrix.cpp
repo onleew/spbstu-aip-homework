@@ -9,7 +9,7 @@ const int exit_code_allocate_error = 2;
 const int exit_code_good = 0;
 
 void print_matrix(const int * const * matrix, size_t m, size_t n);
-int** generate_transpose_matrix(const int * const * matrix, size_t m, size_t n);
+int** generate_transpose_matrix(int** matrix, size_t m, size_t n);
 unsigned get_matrix_max_num_length(const int * const * matrix, size_t m, size_t n);
 
 int main()
@@ -73,7 +73,7 @@ void print_matrix(const int * const * matrix, size_t m, size_t n)
     }
 }
 
-int** generate_transpose_matrix(const int * const * matrix, size_t m, size_t n)
+int** generate_transpose_matrix(int** matrix, size_t m, size_t n)
 {
     int** transpose_matrix = new int*[n];
     for (size_t i = 0; i < n; i++) {
@@ -85,6 +85,8 @@ int** generate_transpose_matrix(const int * const * matrix, size_t m, size_t n)
         } catch (const std::bad_alloc& e) {
             for (size_t k = 0; k < i; k++) delete[] transpose_matrix[k];
             delete[] transpose_matrix;
+            for (size_t i = 0; i < m; i++) delete[] matrix[i];
+            delete[] matrix;
             throw;
         }
     }
