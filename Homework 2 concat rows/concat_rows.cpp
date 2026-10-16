@@ -11,7 +11,9 @@ void better_print_matrix(const int * const * matrix, size_t n1, size_t m1, size_
 int* concat_arrays(const int * arr1, size_t s1, const int * arr2, size_t s2);
 int* copy_array(const int * arr, size_t s);
 int min(int n1, int n2);
+int min(int n1, int out1, int n2, int out2);
 int max(int n1, int n2);
+int max(int n1, int out1, int n2, int out2);
 int** concat_rows(const int * const * lhs, size_t n1, size_t m1, 
     const int * const * rhs, size_t n2, size_t m2);
 
@@ -24,7 +26,9 @@ int main()
         int** matrix_b = input_matrix(&n2, &m2);
 
         int** concated_matrix = concat_rows(matrix_a, n1, m1, matrix_b, n2, m2);
-        better_print_matrix(concated_matrix);
+        better_print_matrix(concated_matrix, min(n1, n2), m1+m2, max(n1, n2), max(n1, m1, n2, m2));
+        for (size_t i = 0; i < max(n1, n2); i++) delete[] concated_matrix[i];
+        delete[] concated_matrix;
         
         for (size_t i = 0; i < n1; i++) delete[] matrix_a[i];
         delete[] matrix_a;
@@ -42,18 +46,18 @@ int main()
 
 int** input_matrix(size_t* n, size_t* m)
 {
-    std::cout << "Write strokes and columns count: ";
-    std::cin >> *m >> *n;
+    std::cout << "Write rows and columns count: ";
+    std::cin >> *n >> *m;
     std::cout << std::endl;
     if (std::cin.fail() || *m == 0 || *n == 0) {
         throw std::invalid_argument("incorrect m&n");
     }
-    int** matrix = new int*[*m];
-    for (size_t i = 0; i < *m; i++) {
+    int** matrix = new int*[*n];
+    for (size_t i = 0; i < *n; i++) {
         try {
             std::cout << "Write " << i+1 << " stroke digits: ";
-            matrix[i] = new int[*n];
-            for (size_t j = 0; j < *n; j++) {
+            matrix[i] = new int[*m];
+            for (size_t j = 0; j < *m; j++) {
                 std::cin >> matrix[i][j];
                 if (std::cin.fail()) {
                     for (size_t k = 0; k < i; k++) delete[] matrix[k];
@@ -126,12 +130,28 @@ int min(int n1, int n2)
     return n2;
 }
 
+int min(int n1, int out1, int n2, int out2)
+{
+    if (n1 < n2) {
+        return out1;
+    }
+    return out2;
+}
+
 int max(int n1, int n2)
 {
     if (n1 < n2) {
         return n2;
     }
     return n1;
+}
+
+int max(int n1, int out1, int n2, int out2)
+{
+    if (n1 < n2) {
+        return out2;
+    }
+    return out1;
 }
 
 int** concat_rows(const int * const * lhs, size_t n1, size_t m1, 
